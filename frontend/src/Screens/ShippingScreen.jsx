@@ -1,19 +1,38 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { Row, Col, ListGroup, Card, Button } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { Row, Col, ListGroup, Card, Button, Form } from 'react-bootstrap';
 import Message from '../Components/Message';
+import { saveShippingAddress } from '../actions/cartActions';
 
 function ShippingScreen() {
-  const cart = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const cart = useSelector((state) => state.cart); // Accessing cart state from Redux store
+
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [country, setCountry] = useState('');
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    if (cart && cart.shippingAddress) {
+      dispatch(saveShippingAddress({ address, city, postalCode, country }));
+      localStorage.setItem('shippingAddress', JSON.stringify({ address, city, postalCode, country }));
+      navigate('/payment');
+    }
+  };
+  
   return (
     <>
-      <div>PlaceOrderScreen</div>
       <Row>
         <Col md={8}>
           <ListGroup variant="flush">
             <ListGroup.Item>
               <h2>Shipping</h2>
+              {/* Shipping details */}
               <p>
                 <strong>Shipping Details:</strong>{' '}
                 {cart.shippingAddress ? (
@@ -28,6 +47,7 @@ function ShippingScreen() {
             </ListGroup.Item>
             <ListGroup.Item>
               <h2>Order Items</h2>
+              {/* Order items */}
               {cart.cartItems.length === 0 ? (
                 <Message variant="info">Your cart is empty</Message>
               ) : (
@@ -56,34 +76,50 @@ function ShippingScreen() {
           <Card>
             <ListGroup variant="flush">
               <ListGroup.Item>
-                <h2>Shipping</h2>
+                <h2>Information</h2>
               </ListGroup.Item>
               <ListGroup.Item>
-                <Row>
-                  <Col>Address</Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Col>City</Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Col>Postal Code</Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Col>Country</Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Button type="button" className="btn-block">
+                <Form onSubmit={submitHandler}>
+                  <Form.Group controlId="address">
+                    <Form.Label>Address</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter address"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="city">
+                    <Form.Label>City</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter city"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="postalCode">
+                    <Form.Label>Postal Code</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter postal code"
+                      value={postalCode}
+                      onChange={(e) => setPostalCode(e.target.value)}
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="country">
+                    <Form.Label>Country</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter country"
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                    />
+                  </Form.Group>
+                  <Button type="submit" variant="primary">
                     Proceed
                   </Button>
-                </Row>
+                </Form>
               </ListGroup.Item>
             </ListGroup>
           </Card>

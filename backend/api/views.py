@@ -101,4 +101,30 @@ def getProduct(request, pk):
         return Response({'detail': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
     except ValueError:
         return Response({'detail': 'Invalid product ID'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+def saveShippingAddress(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user_id = data['user']
+        address = data['address']
+        city = data['city']
+        postalCode = data['postalCode']
+        country = data['country']
+
+        user = User.objects.get(id=user_id)
+        
+        shipping_address, created = ShippingAddress.objects.update_or_create(
+            user=user,
+            defaults={
+                'address': address,
+                'city': city,
+                'postalCode': postalCode,
+                'country': country,
+            },
+        )
+
+        return JsonResponse({'status': 'Address saved successfully'})
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
 

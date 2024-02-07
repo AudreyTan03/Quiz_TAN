@@ -10,28 +10,27 @@ function CartScreen() {
     const location = useLocation();
     const [search, setSearch] = useSearchParams();
     const navigate = useNavigate();
-
+  
     const productId = id;
-    const qty = location.search ? Number(location.search.split('=')[1]) : 1;
+    const qty = location.search ? Number(location.search.split("=")[1]) : 1;
     const dispatch = useDispatch();
-
-    const cart = useSelector(state => state.cart);
+  
+    const cart = useSelector((state) => state.cart);
     const { cartItems } = cart;
-    console.log(cartItems);
-
+  
     useEffect(() => {
-        if (productId) {
-            dispatch(addToCart(productId, qty));
-        }
+      if (productId) {
+        dispatch(addToCart(productId, qty));
+      }
     }, [dispatch, productId, qty]);
-
+  
     const removeFromCartHandler = (id) => {
-        dispatch(removeFromCart(id));
-    }
-
+      dispatch(removeFromCart(id));
+    };
+  
     const checkOutHandler = () => {
-        navigate('/login?redirect=shipping');
-    }
+      navigate("/shipping");
+    };
 
     return (
         <Row>

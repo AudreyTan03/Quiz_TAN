@@ -12,6 +12,8 @@ urlpatterns = [
     path('users/register/', views.registerUser, name='register'),
     path('products/', views.getProducts, name="products"),
     path('products/<str:pk>', views.getProduct, name="products"),
+    path('save-shipping/', views.saveShippingAddress, name='save-shipping'),
+
 ]
 
 if settings.DEBUG:

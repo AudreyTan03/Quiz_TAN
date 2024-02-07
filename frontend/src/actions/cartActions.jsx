@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { CART_ADD_ITEM, CART_REMOVE_ITEM } from '../constants/cartConstants';
+import { CART_ADD_ITEM, CART_REMOVE_ITEM, CART_SAVE_SHIPPING_ADDRESS } from '../constants/cartConstants';
 
 // Action creator to add an item to the cart
 export const addToCart = (id, qty) => async (dispatch, getState) => {
@@ -37,4 +37,15 @@ export const removeFromCart = (id) => (dispatch, getState) => {
     }, 0);
 };
 
-// 25 points
+// Action creator to save shipping address
+export const saveShippingAddress = (data) => async (dispatch, getState) => {
+    dispatch({
+        type: CART_SAVE_SHIPPING_ADDRESS,
+        payload: data,
+    });
+
+    localStorage.setItem('shippingAddress', JSON.stringify(data));
+
+    const { userLogin: { userInfo } } = getState();
+    await axios.post('/api/save-shipping/', { ...data, user: userInfo._id });
+};
