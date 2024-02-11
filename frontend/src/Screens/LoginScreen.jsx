@@ -11,20 +11,28 @@ function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const userLogin = useSelector(state => state.userLogin);
-    const { error, loading, userInfo } = userLogin;
+    const { loading, userInfo } = userLogin;
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
-    const submitHandler = (e) => {
-        e.preventDefault();
-        dispatch(login(email, password));
-    }
+    const [error, setError] = useState('');
 
     useEffect(() => {
-        if (userInfo) {
+        if (userInfo && userInfo.is_active && (userInfo.is_instructor || userInfo.is_student)) {
             navigate('/');
         }
     }, [navigate, userInfo]);
+
+    const submitHandler = (e) => {
+        e.preventDefault();
+        // Check if the user is active and either an instructor or student
+        if (userInfo && userInfo.is_active && (userInfo.is_instructor || userInfo.is_student)) {
+            // Dispatch login action only if the user is active and either an instructor or student
+            dispatch(login(email, password));
+        } else {
+            // Display error message if the user is not active or not an instructor/student
+            setError('Invalid credentials or inactive account');
+        }
+    }
 
     // Handle request password change
     const handleRequestPasswordChange = () => {

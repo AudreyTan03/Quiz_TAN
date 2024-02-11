@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
-import { register } from '../actions/registerActions';
+import { register } from '../actions/userActions'; // Import the register action
 import FormContainer from '../Components/FormContainer';
 
 function RegisterScreen() {
@@ -10,6 +10,7 @@ function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [userType, setUserType] = useState('student'); // Default to student
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -18,7 +19,7 @@ function RegisterScreen() {
     if (password !== confirmPassword) {
       alert('Passwords do not match');
     } else {
-      dispatch(register(name, email, password));
+      dispatch(register(name, email, password, userType)); // Dispatch the register action
       navigate('/login');
     }
   };
@@ -62,6 +63,17 @@ function RegisterScreen() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
+        </Form.Group>
+        <Form.Group controlId='userType'>
+          <Form.Label>User Type</Form.Label>
+          <Form.Control
+            as='select'
+            value={userType}
+            onChange={(e) => setUserType(e.target.value)} // Update userType state
+          >
+            <option value='student'>Student</option>
+            <option value='instructor'>Instructor</option>
+          </Form.Control>
         </Form.Group>
         <Button type='submit' variant='primary'>
           Register

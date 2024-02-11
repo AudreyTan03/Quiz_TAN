@@ -1,8 +1,8 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import {thunk} from 'redux-thunk'; // Correct import statement
 import { productListReducer, productDetailsReducer } from './reducers/productsReducer';
-import { userLoginReducer } from './reducers/userReducers';
-import { userRegisterReducer } from './reducers/registerReducers'; // Import new reducers
+import { userLoginReducer, userRegisterReducer } from './reducers/userReducers';
+// import { userRegisterReducer } from './reducers/registerReducers'; // Import new reducers
 import { cartReducer } from './reducers/cartReducer';
 import { userSendChangePasswordReducer, userConfirmChangePasswordReducer } from './reducers/userReducers';
 
