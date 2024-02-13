@@ -16,13 +16,20 @@ function RegisterScreen() {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    // console.log('Name:', name);
+    // console.log('Email:', email);
+    // console.log('Password:', password);
+    // console.log('User Type:', userType);
+    // console.log('Confirm Password:', confirmPassword); // pang test
+  
     if (password !== confirmPassword) {
       alert('Passwords do not match');
     } else {
-      dispatch(register(name, email, password, userType)); // Dispatch the register action
+      dispatch(register(name, email, password, userType, confirmPassword)); // Dispatch the register action
       navigate('/login');
     }
   };
+  
 
   return (
     <FormContainer>

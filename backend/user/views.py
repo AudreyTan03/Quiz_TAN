@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes
 from user.serializers import SendPasswordResetEmailSerializer, UserChangePasswordSerializer, UserPasswordResetSerializer, UserRegistrationSerializers, UserLoginSerializer, UserProfileSerializer
 from django.contrib.auth import authenticate
 from user.renderers import UserRenderer
@@ -18,24 +19,17 @@ def get_tokens_for_user(user):
         'access': str(refresh.access_token),
     }
 
-class UserRegistrationView(APIView):
-    renderer_classes = [UserRenderer]
-    
-    def post(self, request, format=None):
-        serializer = UserRegistrationSerializers(data=request.data)
-        
-        if serializer.is_valid(raise_exception=True):
-            user_type = request.data.get('user_type', 'student')  # Default to student if not provided
-            if user_type == 'instructor':
-                is_instructor = True
-            else:
-                is_instructor = False
-                
-            user = serializer.save(is_instructor=is_instructor)
-            token = get_tokens_for_user(user)
-            return Response({'token': token, 'msg': 'Registration Success'}, status=status.HTTP_201_CREATED)
-        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+def registerUser(request):
+    # print('Request Data:', request.data)  # pang test
+    serializer = UserRegistrationSerializers(data=request.data, context={'request': request})
+    if serializer.is_valid(raise_exception=True):
+        user_type = serializer.validated_data.get('user_type', 'student')
+        is_instructor = user_type == 'instructor'
+        user = serializer.save(user_type=user_type, is_instructor=is_instructor)
+        token = get_tokens_for_user(user)
+        return Response({'token': token, 'msg': 'Registration Success'}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLoginView(APIView):

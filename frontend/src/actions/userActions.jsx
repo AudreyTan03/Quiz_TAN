@@ -18,7 +18,7 @@ import {
     USER_SET_ROLE_FAIL
 } from '../constants/userConstants';
 
-export const register = (name, email, password, userType) => async (dispatch) => {
+export const register = (name, email, password, userType, confirmPassword) => async (dispatch) => {
     try {
         dispatch({ type: USER_REGISTER_REQUEST });
         const config = {
@@ -28,7 +28,7 @@ export const register = (name, email, password, userType) => async (dispatch) =>
         };
         const { data } = await axios.post(
             'http://127.0.0.1:8000/api/users/register/',
-            { name, email, password, user_type: userType }, // Send user type to backend
+            { name, email, password, password2: confirmPassword, user_type: userType }, // Include confirmPassword as password2
             config
         );
         dispatch({

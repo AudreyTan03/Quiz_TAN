@@ -14,12 +14,9 @@ class UserRegistrationSerializers(serializers.ModelSerializer):
     )
     user_type = serializers.ChoiceField(choices=USER_TYPE_CHOICES)
 
-    # We are writing this because we need to confirm password field in our Registration Request
-    password2 = serializers.CharField(style={'input_type':'password'}, write_only=True)
-
     class Meta:
         model = User
-        fields = ['email', 'name', 'password', 'password2', 'user_type']
+        fields = ['email', 'name', 'password', 'user_type']
         extra_kwargs={
             'password': {'write_only': True}
         }
@@ -27,15 +24,26 @@ class UserRegistrationSerializers(serializers.ModelSerializer):
     # Validating Password and Confirm Password while Registration
     def validate(self, attrs):
         password = attrs.get('password')
-        password2 = attrs.get('password2')
+        password2 = self.context['request'].data.get('password2')  # Get password2 from request data
+        user_type = attrs.get('user_type')
+
         if password != password2:
-            raise serializers.ValidationError("Password and Confirm Password doesn't match")
-        return attrs
+            raise serializers.ValidationError("Password and Confirm Password don't match")
+
+        # Check if user type is valid
+        if user_type not in dict(self.USER_TYPE_CHOICES).keys():
+            raise serializers.ValidationError("Invalid user type")
+
+        return attrs 
     
-    def create(self, validate_data):
-        user_type = validate_data.pop('user_type')
-        user = User.objects.create_user(**validate_data)
+    def create(self, validated_data):
+        user_type = validated_data.pop('user_type')
+        password = validated_data.pop('password')
+        is_instructor = user_type == 'instructor'
+        user = User.objects.create_user(**validated_data, password=password)
         user.user_type = user_type
+        user.is_instructor = is_instructor
+        user.is_student = not is_instructor  # explicit save nalang tangina
         user.save()
         return user
 
