@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from user.utils import Util
 from user.models import User
+from django.contrib.auth import authenticate
 from xml.dom import ValidationErr
 from django.utils.encoding import smart_str, force_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -50,7 +51,7 @@ class UserRegistrationSerializers(serializers.ModelSerializer):
 class UserLoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=255)
     password = serializers.CharField(max_length=255, write_only=True)
-    user_type = serializers.ChoiceField(choices=User.USER_TYPE_CHOICES, write_only=True)  # Add a field for user type
+    user_type = serializers.ChoiceField(choices=User.USER_TYPE_CHOICES, read_only=True)  # Kukunin lang
 
     class Meta:
         model = User
@@ -59,14 +60,11 @@ class UserLoginSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         email = attrs.get('email')
         password = attrs.get('password')
-        user_type = attrs.get('user_type')
+
 
         user = authenticate(email=email, password=password)
         if user:
-            if user_type == user.user_type:  # Check if the user type matches
                 return attrs
-            else:
-                raise serializers.ValidationError("Invalid user type")
         else:
             raise serializers.ValidationError("Invalid credentials")
 

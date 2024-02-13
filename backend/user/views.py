@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from user.serializers import SendPasswordResetEmailSerializer, UserChangePasswordSerializer, UserPasswordResetSerializer, UserRegistrationSerializers, UserLoginSerializer, UserProfileSerializer
 from django.contrib.auth import authenticate
+from rest_framework.exceptions import ValidationError
+
 from user.renderers import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -11,7 +13,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import permissions, status
 
 #Generate token Manually
-def get_tokens_for_user(user):
+def get_tokens_for_user(user): # Token generator ->Auds (gumagana sa regis)
     refresh = RefreshToken.for_user(user)
 
     return {
@@ -32,25 +34,25 @@ def registerUser(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserLoginView(APIView):
-    renderer_classes = [UserRenderer]
-    
-    def post(self, request, format=None):
+@api_view(['POST'])
+def loginUser(request, format=None):
+    if request.method == 'POST':
         serializer = UserLoginSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
+        if serializer.is_valid():
             email = serializer.data.get('email')
             password = serializer.data.get('password')
             user = authenticate(email=email, password=password)
             if user is not None:
-                # Generate tokens
                 token = get_tokens_for_user(user)
-                # Get user type
                 user_type = 'instructor' if user.is_instructor else 'student'
-                # Add user type to response
                 response_data = {'token': token, 'msg': 'Login Success', 'user_type': user_type}
                 return Response(response_data, status=status.HTTP_200_OK)
             else:
                 return Response({'errors': {'non_field_errors': ['Email or Password is not valid']}}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            # Handle serializer validation errors
+            raise ValidationError(serializer.errors)
+
 
 class UserProfileView(APIView):
     renderer_classes = [UserRenderer]

@@ -21,6 +21,8 @@ function Header() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link href="/cart"><i className="fas fa-shopping-cart"></i>Cart</Nav.Link>
+          </Nav>
+          <Nav>
             {userInfo ? (
               <NavDropdown title={userInfo.name} id="username">
                 <LinkContainer to="/profile">

@@ -24,13 +24,14 @@ function LoginScreen() {
 
     const submitHandler = (e) => {
         e.preventDefault();
-        // Check if the user is active and either an instructor or student
         if (userInfo && userInfo.is_active && (userInfo.is_instructor || userInfo.is_student)) {
             // Dispatch login action only if the user is active and either an instructor or student
             dispatch(login(email, password));
         } else {
             // Display error message if the user is not active or not an instructor/student
             setError('Invalid credentials or inactive account');
+    console.log('Email:', email);
+    console.log('Password:', password);            
         }
     }
 
