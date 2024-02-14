@@ -23,16 +23,8 @@ function LoginScreen() {
     }, [navigate, userInfo]);
 
     const submitHandler = (e) => {
-        e.preventDefault();
-        if (userInfo && userInfo.is_active && (userInfo.is_instructor || userInfo.is_student)) {
-            // Dispatch login action only if the user is active and either an instructor or student
-            dispatch(login(email, password));
-        } else {
-            // Display error message if the user is not active or not an instructor/student
-            setError('Invalid credentials or inactive account');
-    console.log('Email:', email);
-    console.log('Password:', password);            
-        }
+        e.preventDefault()
+        dispatch(login(email, password))
     }
 
     // Handle request password change
@@ -49,7 +41,7 @@ function LoginScreen() {
                 <Form.Group controlId='email'>
                     <Form.Label>Email Address</Form.Label>
                     <Form.Control
-                        type='email'
+                        type='text'
                         placeholder='Enter email'
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}

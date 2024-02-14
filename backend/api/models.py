@@ -1,7 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 import os
 import random
+from user.models import User
 # from django.db import models
 from django.contrib.auth.models import BaseUserManager,AbstractBaseUser
 # Create your models here.

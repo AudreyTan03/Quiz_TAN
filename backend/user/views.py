@@ -36,12 +36,16 @@ def registerUser(request):
 
 @api_view(['POST'])
 def loginUser(request, format=None):
+    print('login')
     if request.method == 'POST':
         serializer = UserLoginSerializer(data=request.data)
+        print('Request Post')
         if serializer.is_valid():
             email = serializer.data.get('email')
             password = serializer.data.get('password')
             user = authenticate(email=email, password=password)
+            print('Test user')
+            print(user)
             if user is not None:
                 token = get_tokens_for_user(user)
                 user_type = 'instructor' if user.is_instructor else 'student'

@@ -233,3 +233,5 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 PASSWORD_RESET_TIMEOUT= 900 # 900 seconds = 15 minutes
+
+AUTH_USER_MODEL='user.User'

@@ -1,3 +1,4 @@
+from imaplib import _Authenticator
 from rest_framework import serializers
 from user.utils import Util
 from user.models import User
@@ -48,25 +49,34 @@ class UserRegistrationSerializers(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class UserLoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=255)
     password = serializers.CharField(max_length=255, write_only=True)
-    user_type = serializers.ChoiceField(choices=User.USER_TYPE_CHOICES, read_only=True)  # Kukunin lang
+    # user_type = serializers.ChoiceField(choices=User.USER_TYPE_CHOICES, read_only=True)  # Kukunin lang
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'user_type']  # Include user_type in the serializer fields
+        fields = ['email', 'password']  # Include user_type in the serializer fields
 
     def validate(self, attrs):
         email = attrs.get('email')
         password = attrs.get('password')
+        print(email, password)
 
-
+        
         user = authenticate(email=email, password=password)
+        print(user)
         if user:
                 return attrs
         else:
             raise serializers.ValidationError("Invalid credentials")
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id','email', 'name']
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
