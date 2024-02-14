@@ -41,10 +41,13 @@ def loginUser(request, format=None):
         serializer = UserLoginSerializer(data=request.data)
         print('Request Post')
         if serializer.is_valid():
-            email = serializer.data.get('email')
-            password = serializer.data.get('password')
+            email = serializer.validated_data['email']
+            password = serializer.validated_data['password']
+            # print(serializer.validated_data)
             user = authenticate(email=email, password=password)
+            
             print('Test user')
+            print(email, password)
             print(user)
             if user is not None:
                 token = get_tokens_for_user(user)

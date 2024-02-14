@@ -62,11 +62,11 @@ class UserLoginSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         email = attrs.get('email')
         password = attrs.get('password')
-        print(email, password)
+        # print(email, password)
 
         
         user = authenticate(email=email, password=password)
-        print(user)
+        # print(user)
         if user:
                 return attrs
         else:
